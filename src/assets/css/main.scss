@@ -1,0 +1,22 @@
+@import 'colors';
+@import 'reset';
+@import 'layout';
+
+html,
+body {
+  min-width: 100%;
+  min-height: 100%;
+}
+
+body {
+  background: var(--primary);
+  background: -webkit-linear-gradient(to bottom left, var(--primary) 0%, var(--secondary) 100%);
+  background: -moz-linear-gradient(to bottom left, var(--primary) 0%, var(--secondary) 100%);
+  background: linear-gradient(to bottom left, var(--primary) 0%, var(--secondary) 100%);
+}
+
+a,
+label,
+p {
+  font-family: 'Lato', sans-serif;
+}
