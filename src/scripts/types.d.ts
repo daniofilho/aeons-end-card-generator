@@ -15,6 +15,7 @@ export interface IImageHelpers {
 export interface IFontParameters {
   fillStyle?: string | CanvasGradient | CanvasPattern;
   textAlign?: 'left' | 'center' | 'right';
+  verticalAlign?: 'top' | 'center' | 'bottom';
   font?: string;
 }
 

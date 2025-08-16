@@ -13,59 +13,80 @@ import { ICard } from './types';
 
 const cards: ICard[] = [
   {
+    nemesis: 'Artifice',
+    description:
+      '<b>Each</b> <b>player</b> destroys their <b>most</b> expensive card in hand. Unleash %% for each player that destroyed a card that costs less than 3 %% . \n OR \n Place the <b>most</b> recently discarded minion card in the nemesis discard pile back into play.',
+
+    life: 6,
+    image: 'http://localhost:5173/images/expedition-cards/servo-teste.jpg',
+    level: 9,
+    name: 'Nome muito grande mesmo',
+    type: 'servo',
+  },
+  {
+    nemesis: 'Artifice',
+    description:
+      '<b>Each</b> <b>player</b> destroys their <b>most</b> \n The nemesis discard pile back into play.',
+
+    life: 6,
+    image: 'http://localhost:5173/images/expedition-cards/servo-teste.jpg',
+    level: 9,
+    name: 'Nome muito grande mesmo',
+    type: 'servo',
+  },
+  {
     type: 'ataque',
     nemesis: 'Artifice',
     description:
       '<b>Each</b> <b>player</b> destroys their <b>most</b> expensive card in hand. Unleash %% for each player that destroyed a card that costs less than 3 %% . \n OR \n Place the <b>most</b> recently discarded minion card in the nemesis discard pile back into play.',
-    level: 1,
+    level: 9,
     name: 'Reembaralhador de Ataques',
   },
   {
     type: 'feitico',
-    description: 'Dê 1 de dano. Você pode destruir este card.',
-    cost: 1,
-    image: '/expedition-cards/feitico-teste.jpg',
-    name: 'Machuca até a alma',
+    description:
+      '<b>Each</b> <b>player</b> destroys their <b>most</b> expensive card in hand. Unleash %% for each player that destroyed a card that costs less than 3 %% . \n OR \n Place the <b>most</b> recently discarded minion card in the nemesis discard pile back into play.',
+
+    cost: 9,
+    image: 'http://localhost:5173/images/expedition-cards/feitico-teste.jpg',
+    name: 'Nome muito grande mesmo',
     characterName: 'Gustave',
   },
   {
     type: 'gema',
     cost: 8,
     description:
-      'lipsum dolor sit amet, consectetur adipiscing elit. Nisl vel consectetur consectetur.',
-    image: '/expedition-cards/gema-teste.jpg',
-    name: 'Gema Teste',
-  },
-  {
-    nemesis: 'Clair Obscure Expedition 33',
-    description: 'O jogador com menos vida sofre 2 de dano.',
-    level: 1,
-    name: 'Espreitador de Cadáveres',
-    type: 'golpe',
-  },
-  {
-    nemesis: 'Artifice',
-    description: 'Descarte 2 cards da sua mão. Ganhe 5 de vida.',
-    level: 2,
-    name: 'Poder do Curandeiro',
-    type: 'poder',
+      '<b>Each</b> <b>player</b> destroys their <b>most</b> expensive card in hand. Unleash %% for each player that destroyed a card that costs less than 3 %% . \n OR \n Place the <b>most</b> recently discarded minion card in the nemesis discard pile back into play.',
+
+    image: 'http://localhost:5173/images/expedition-cards/gema-teste.jpg',
+    name: 'Nome muito grande mesmo',
   },
   {
     cost: 3,
     description:
-      'Ganhe 1 de vida. Se você tiver 3 ou mais cards de Gema em sua mão, ganhe 2 de vida adicional.',
-    image: '/expedition-cards/reliquia-teste.jpg',
-    name: 'Amuleto da Vida',
+      '<b>Each</b> <b>player</b> destroys their <b>most</b> expensive card in hand. Unleash %% for each player that destroyed a card that costs less than 3 %% . \n OR \n Place the <b>most</b> recently discarded minion card in the nemesis discard pile back into play.',
+
+    image: 'http://localhost:5173/images/expedition-cards/reliquia-teste.jpg',
+    name: 'Nome muito grande mesmo',
     type: 'reliquia',
   },
   {
+    nemesis: 'Clair Obscure',
+    description:
+      '<b>Each</b> <b>player</b> destroys their <b>most</b> expensive card in hand. Unleash %% for each player that destroyed a card that costs less than 3 %% . \n OR \n Place the <b>most</b> recently discarded minion card in the nemesis discard pile back into play.',
+
+    level: 9,
+    name: 'Nome muito grande mesmo',
+    type: 'golpe',
+  },
+  {
     nemesis: 'Artifice',
-    description: '<strong>Contínuo</strong>: Causa 1 de dano a cada jogador.',
-    life: 6,
-    image: '/expedition-cards/servo-teste.jpg',
-    level: 1,
-    name: 'Servo Atacante',
-    type: 'servo',
+    description:
+      '<b>Each</b> <b>player</b> destroys their <b>most</b> expensive card in hand. Unleash %% for each player that destroyed a card that costs less than 3 %% . \n OR \n Place the <b>most</b> recently discarded minion card in the nemesis discard pile back into play.',
+
+    level: 2,
+    name: 'Nome muito grande mesmo',
+    type: 'poder',
   },
 ];
 

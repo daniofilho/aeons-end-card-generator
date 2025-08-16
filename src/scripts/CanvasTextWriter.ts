@@ -7,7 +7,8 @@ export default class CanvasTextWriter {
   defaultFont: string;
   lineHeight: number;
 
-  textAlign: CanvasTextAlign;
+  textAlign: IFontParameters['textAlign'];
+  verticalAlign: IFontParameters['verticalAlign'];
   wordGap: number;
 
   constructor(
@@ -18,6 +19,7 @@ export default class CanvasTextWriter {
     this.ctx = ctx;
     this.imageHelpers = imageHelpers;
 
+    this.verticalAlign = fontParameters.verticalAlign || 'top';
     this.textAlign = fontParameters.textAlign || 'left';
 
     ctx.fillStyle = fontParameters.fillStyle || '#FFFFFF';
@@ -86,6 +88,18 @@ export default class CanvasTextWriter {
     return x;
   };
 
+  private getLineYBasedOnVerticalAlign = (linesHeight: number, y: number) => {
+    if (this.verticalAlign === 'center') {
+      return y - linesHeight / 2;
+    }
+
+    if (this.verticalAlign === 'bottom') {
+      return y - linesHeight;
+    }
+
+    return y;
+  };
+
   private getLineWidth = (line: ILine) => {
     return line.word.reduce((acc, word) => acc + word.width + this.wordGap, 0);
   };
@@ -138,10 +152,10 @@ export default class CanvasTextWriter {
   };
 
   // Separa o texto em linhas de acordo com o limite máximo da largura
-  private wrapText = (text: string, x: number, y: number, maxWidth: number) => {
+  writeText = (text: string, x: number, y: number, maxWidth: number) => {
     const words = text.split(' ');
 
-    const lines: ILine[] = [];
+    let lines: ILine[] = [];
 
     let lineWidth = 0;
     let currentLine: ILine = { word: [], y };
@@ -178,11 +192,17 @@ export default class CanvasTextWriter {
     // Adiciona a última linha
     if (currentLine.word.length > 0) lines.push(currentLine);
 
+    // Ajusta o y de cada linha com base no alinhamento vertical
+    const linesHeight = lines.reduce((acc) => acc + this.lineHeight, 0);
+
+    lines = lines.map((line) => {
+      return {
+        ...line,
+        y: this.getLineYBasedOnVerticalAlign(linesHeight, line.y),
+      };
+    });
+
     // Agora imprime cada uma delas
     lines.forEach((o) => this.writeLineOnCanvas(o, x));
   };
-
-  writeText(text: string, x: number, y: number, maxWidth: number) {
-    this.wrapText(text, x, y, maxWidth);
-  }
 }

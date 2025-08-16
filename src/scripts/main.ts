@@ -118,26 +118,74 @@ const createCanvasContext = (): CanvasRenderingContext2D | null => {
   return canvas.getContext('2d');
 };
 
-const writeCardWhiteName = (ctx: CanvasRenderingContext2D, text: string, yPercent: number) => {
-  ctx.fillStyle = '#FFFFFF';
-  ctx.textAlign = 'center';
-  ctx.font = "100px 'Title'";
-
+const writeCardName = (
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  yPercent: number,
+  color: string
+) => {
   const y = getRealYFromPercent(yPercent);
   const x = getRealXFromPercent(50);
 
-  ctx.fillText(text, x, y);
+  const writer = new CanvasTextWriter(ctx, imageHelpers, {
+    fillStyle: color,
+    textAlign: 'center',
+    font: "bold 100px 'Title'",
+  });
+
+  writer.writeText(text, x, y, margin);
+};
+
+const writeCharacterName = (ctx: CanvasRenderingContext2D, text: string) => {
+  const y = getRealYFromPercent(97);
+  const x = getRealXFromPercent(96);
+
+  const writer = new CanvasTextWriter(ctx, imageHelpers, {
+    fillStyle: '#FFFFFF',
+    textAlign: 'right',
+    font: "bold 55px 'Title'",
+  });
+
+  writer.writeText(text, x, y, margin);
+};
+
+const writeCost = (ctx: CanvasRenderingContext2D, text: string) => {
+  const y = getRealYFromPercent(9.3);
+  const x = getRealXFromPercent(90.5);
+
+  const writer = new CanvasTextWriter(ctx, imageHelpers, {
+    fillStyle: '#FFFFFF',
+    textAlign: 'center',
+    font: "bold 150px 'Title'",
+  });
+
+  writer.writeText(text, x, y, margin);
+};
+
+const writeLife = (ctx: CanvasRenderingContext2D, text: string) => {
+  const y = getRealYFromPercent(57);
+  const x = getRealXFromPercent(90);
+
+  const writer = new CanvasTextWriter(ctx, imageHelpers, {
+    fillStyle: '#FFFFFF',
+    textAlign: 'center',
+    font: "bold 160px 'Title'",
+  });
+
+  writer.writeText(text, x, y, margin);
 };
 
 const writeNemesis = (ctx: CanvasRenderingContext2D, text: string, yPercent: number) => {
-  ctx.fillStyle = '#111111';
-  ctx.textAlign = 'center';
-  ctx.font = "70px 'Title'";
-
   const y = getRealYFromPercent(yPercent);
   const x = getRealXFromPercent(50);
 
-  ctx.fillText(text, x, y);
+  const writer = new CanvasTextWriter(ctx, imageHelpers, {
+    fillStyle: '#111111',
+    textAlign: 'center',
+    font: "bold 70px 'Title'",
+  });
+
+  writer.writeText(text, x, y, margin);
 };
 
 const writeLevel = (
@@ -146,14 +194,16 @@ const writeLevel = (
   xPercent: number,
   yPercent: number
 ) => {
-  ctx.fillStyle = '#111111';
-  ctx.textAlign = 'center';
-  ctx.font = "50px 'Title'";
-
   const y = getRealYFromPercent(yPercent);
   const x = getRealXFromPercent(xPercent);
 
-  ctx.fillText(text, x, y);
+  const writer = new CanvasTextWriter(ctx, imageHelpers, {
+    fillStyle: '#111111',
+    textAlign: 'center',
+    font: "bold 50px 'Title'",
+  });
+
+  writer.writeText(text, x, y, margin);
 };
 
 const writeDescription = (ctx: CanvasRenderingContext2D, text: string, yPercent: number) => {
@@ -163,7 +213,8 @@ const writeDescription = (ctx: CanvasRenderingContext2D, text: string, yPercent:
   const writer = new CanvasTextWriter(ctx, imageHelpers, {
     fillStyle: '#111111',
     textAlign: 'center',
-    font: "80px 'Paragraph'",
+    font: "74px 'Paragraph'",
+    verticalAlign: 'center',
   });
 
   writer.writeText(text, x, y, margin);
@@ -173,63 +224,183 @@ const writeDescription = (ctx: CanvasRenderingContext2D, text: string, yPercent:
 
 const generateAtaqueCard = (card: ICard_Ataque) => {
   const ctx = createCanvasContext();
-  if (!ctx) return;
+  if (!ctx || !templates.ataque) return;
 
-  if (templates.ataque) ctx.drawImage(templates.ataque, 0, 0, cardSize.width, cardSize.height);
+  // Template
+  ctx.drawImage(templates.ataque, 0, 0, cardSize.width, cardSize.height);
 
   // Name
-  writeCardWhiteName(ctx, card.name, 15);
+  writeCardName(ctx, card.name, 15, '#FFFFFF');
 
   // Descrição
-  writeDescription(ctx, card.description, 50);
+  writeDescription(ctx, card.description, 60);
 
   // Nêmesis
   writeNemesis(ctx, card.nemesis, 95.5);
 
   // Level
-  writeLevel(ctx, String(card.level), 93.5, 96.6);
+  writeLevel(ctx, String(card.level), 93.8, 96.6);
 };
 
 const generateFeiticoCard = (card: ICard_Feitico) => {
   const ctx = createCanvasContext();
-  if (!ctx) return;
+  if (!ctx || !templates.feitico) return;
 
-  if (templates.feitico) ctx.drawImage(templates.feitico, 0, 0, cardSize.width, cardSize.height);
+  const image = new Image();
+  image.src = card.image;
+  image.onload = () => {
+    if (!templates.feitico) return;
+
+    // Imagem
+    ctx.drawImage(image, 0, 0, cardSize.width, cardSize.height);
+
+    // Template
+    ctx.drawImage(templates.feitico, 0, 0, cardSize.width, cardSize.height);
+
+    // Nome
+    writeCardName(ctx, card.name, 65, '#111111');
+
+    // Descrição
+    writeDescription(ctx, card.description, 80);
+
+    // Nome do Personagem
+    if (card.characterName) writeCharacterName(ctx, card.characterName);
+
+    // Custo
+    writeCost(ctx, String(card.cost));
+  };
 };
 
 const generateGemaCard = (card: ICard_Gema) => {
   const ctx = createCanvasContext();
   if (!ctx) return;
 
-  if (templates.gema) ctx.drawImage(templates.gema, 0, 0, cardSize.width, cardSize.height);
+  if (!ctx || !templates.gema) return;
+
+  const image = new Image();
+  image.src = card.image;
+  image.onload = () => {
+    if (!templates.gema) return;
+
+    // Imagem
+    ctx.drawImage(image, 0, 0, cardSize.width, cardSize.height);
+
+    // Template
+    ctx.drawImage(templates.gema, 0, 0, cardSize.width, cardSize.height);
+
+    // Nome
+    writeCardName(ctx, card.name, 65, '#111111');
+
+    // Descrição
+    writeDescription(ctx, card.description, 80);
+
+    // Nome do Personagem
+    if (card.characterName) writeCharacterName(ctx, card.characterName);
+
+    // Custo
+    writeCost(ctx, String(card.cost));
+  };
 };
 
 const generateGolpeCard = (card: ICard_Golpe) => {
   const ctx = createCanvasContext();
-  if (!ctx) return;
+  if (!ctx || !templates.golpe) return;
 
-  if (templates.golpe) ctx.drawImage(templates.golpe, 0, 0, cardSize.width, cardSize.height);
+  // Template
+  ctx.drawImage(templates.golpe, 0, 0, cardSize.width, cardSize.height);
+
+  // Name
+  writeCardName(ctx, card.name, 15, '#FFFFFF');
+
+  // Descrição
+  writeDescription(ctx, card.description, 60);
+
+  // Nêmesis
+  writeNemesis(ctx, card.nemesis, 95.5);
+
+  // Level
+  writeLevel(ctx, String(card.level), 94.8, 96.6);
 };
 
 const generatePoderCard = (card: ICard_Poder) => {
   const ctx = createCanvasContext();
-  if (!ctx) return;
+  if (!ctx || !templates.poder) return;
 
-  if (templates.poder) ctx.drawImage(templates.poder, 0, 0, cardSize.width, cardSize.height);
+  // Template
+  ctx.drawImage(templates.poder, 0, 0, cardSize.width, cardSize.height);
+
+  // Name
+  writeCardName(ctx, card.name, 15, '#FFFFFF');
+
+  // Descrição
+  writeDescription(ctx, card.description, 60);
+
+  // Nêmesis
+  writeNemesis(ctx, card.nemesis, 95.5);
+
+  // Level
+  writeLevel(ctx, String(card.level), 94.6, 96.4);
 };
 
 const generateReliquiaCard = (card: ICard_Reliquia) => {
   const ctx = createCanvasContext();
-  if (!ctx) return;
+  if (!ctx || !templates.reliquia) return;
 
-  if (templates.reliquia) ctx.drawImage(templates.reliquia, 0, 0, cardSize.width, cardSize.height);
+  const image = new Image();
+  image.src = card.image;
+  image.onload = () => {
+    if (!templates.reliquia) return;
+
+    // Imagem
+    ctx.drawImage(image, 0, 0, cardSize.width, cardSize.height);
+
+    // Template
+    ctx.drawImage(templates.reliquia, 0, 0, cardSize.width, cardSize.height);
+
+    // Nome
+    writeCardName(ctx, card.name, 65, '#111111');
+
+    // Descrição
+    writeDescription(ctx, card.description, 80);
+
+    // Nome do Personagem
+    if (card.characterName) writeCharacterName(ctx, card.characterName);
+
+    // Custo
+    writeCost(ctx, String(card.cost));
+  };
 };
 
 const generateServoCard = (card: ICard_Servo) => {
   const ctx = createCanvasContext();
-  if (!ctx) return;
+  if (!ctx || !templates.servo) return;
 
-  if (templates.servo) ctx.drawImage(templates.servo, 0, 0, cardSize.width, cardSize.height);
+  const image = new Image();
+  image.src = card.image;
+  image.onload = () => {
+    if (!templates.servo) return;
+
+    // Imagem
+    ctx.drawImage(image, 0, 0, cardSize.width, cardSize.height);
+
+    // Template
+    ctx.drawImage(templates.servo, 0, 0, cardSize.width, cardSize.height);
+
+    // Nome
+    writeCardName(ctx, card.name, 64, '#111111');
+
+    // Descrição
+    writeDescription(ctx, card.description, 81);
+
+    // Vida
+    writeLife(ctx, String(card.life));
+
+    // Nêmesis
+    writeNemesis(ctx, card.nemesis, 95.5);
+
+    // Level
+    writeLevel(ctx, String(card.level), 94.4, 96.6);
+  };
 };
 
 const generateCards = () => {
