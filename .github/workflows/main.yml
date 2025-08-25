@@ -1,0 +1,37 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - alpha
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check files
+        run: ls -a
+
+      - name: Upload export to FTP Server
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{vars.FTP_SERVER }}
+          username: ${{vars.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: ${{vars.FTP_PATH }}
+          local-dir: ./dist/
+          exclude: |
+            **/.git*
+            **/.git*/** 
+            .git* 
+            readme.json
+            todo.md
+            .gitignore
+            .vite.config.json
+            .nvmrc
+            package.json
+            tsconfig.json

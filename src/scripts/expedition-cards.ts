@@ -21,7 +21,7 @@ const cards: ICard[] = [
     image: 'http://localhost:5173/images/expedition-cards/servo-teste.jpg',
     level: 9,
     name: 'Nome muito grande mesmo',
-    type: 'servo',
+    type: 'minion',
   },
   {
     nemesis: 'Artifice',
@@ -32,10 +32,10 @@ const cards: ICard[] = [
     image: 'http://localhost:5173/images/expedition-cards/servo-teste.jpg',
     level: 9,
     name: 'Nome muito grande mesmo',
-    type: 'servo',
+    type: 'minion',
   },
   {
-    type: 'ataque',
+    type: 'attack',
     nemesis: 'Artifice',
     description:
       '<b>Each</b> <b>player</b> destroys their <b>most</b> expensive card in hand. Unleash %% for each player that destroyed a card that costs less than 3 %% . \n OR \n Place the <b>most</b> recently discarded minion card in the nemesis discard pile back into play.',
@@ -43,7 +43,7 @@ const cards: ICard[] = [
     name: 'Reembaralhador de Ataques',
   },
   {
-    type: 'feitico',
+    type: 'spell',
     description:
       '<b>Each</b> <b>player</b> destroys their <b>most</b> expensive card in hand. Unleash %% for each player that destroyed a card that costs less than 3 %% . \n OR \n Place the <b>most</b> recently discarded minion card in the nemesis discard pile back into play.',
 
@@ -53,7 +53,7 @@ const cards: ICard[] = [
     characterName: 'Gustave',
   },
   {
-    type: 'gema',
+    type: 'gem',
     cost: 8,
     description:
       '<b>Each</b> <b>player</b> destroys their <b>most</b> expensive card in hand. Unleash %% for each player that destroyed a card that costs less than 3 %% . \n OR \n Place the <b>most</b> recently discarded minion card in the nemesis discard pile back into play.',
@@ -68,16 +68,7 @@ const cards: ICard[] = [
 
     image: 'http://localhost:5173/images/expedition-cards/reliquia-teste.jpg',
     name: 'Nome muito grande mesmo',
-    type: 'reliquia',
-  },
-  {
-    nemesis: 'Clair Obscure',
-    description:
-      '<b>Each</b> <b>player</b> destroys their <b>most</b> expensive card in hand. Unleash %% for each player that destroyed a card that costs less than 3 %% . \n OR \n Place the <b>most</b> recently discarded minion card in the nemesis discard pile back into play.',
-
-    level: 9,
-    name: 'Nome muito grande mesmo',
-    type: 'golpe',
+    type: 'relic',
   },
   {
     nemesis: 'Artifice',
@@ -86,7 +77,7 @@ const cards: ICard[] = [
 
     level: 2,
     name: 'Nome muito grande mesmo',
-    type: 'poder',
+    type: 'power',
   },
 ];
 

@@ -1,29 +1,31 @@
 import cards from './expedition-cards';
 import {
   ITemplates,
-  ICard_Ataque,
-  ICard_Feitico,
-  ICard_Gema,
-  ICard_Golpe,
-  ICard_Poder,
-  ICard_Reliquia,
-  ICard_Servo,
+  ICard_Attack,
+  ICard_Spell,
+  ICard_Gem,
+  ICard_Power,
+  ICard_Relic,
+  ICard_Minion,
   IImageHelpers,
 } from './types';
 
-import templateAtaqueSrc from '../assets/images/templates/ataque.png';
-import templateFeiticoSrc from '../assets/images/templates/feitico.png';
-import templateGemaSrc from '../assets/images/templates/gema.png';
-import templateGolpeSrc from '../assets/images/templates/golpe.png';
-import templatePoderSrc from '../assets/images/templates/poder.png';
-import templateReliquiaSrc from '../assets/images/templates/reliquia.png';
-import templateServoSrc from '../assets/images/templates/servo.png';
+import config from './config';
 
-import eterIconSrc from '../assets/images/icone-eter.png';
+import templateAttackSrc from '../assets/images/templates/attack.png';
+import templateSpellSrc from '../assets/images/templates/spell.png';
+import templateGemSrc from '../assets/images/templates/gem.png';
+import templatePowerSrc from '../assets/images/templates/power.png';
+import templateRelicSrc from '../assets/images/templates/relic.png';
+import templateServoSrc from '../assets/images/templates/minion.png';
+
+import etherIconSrc from '../assets/images/icone-eter.png';
 
 import titleFontSRC from '../assets/fonts/Constantine.woff';
 import paragraphFontSRC from '../assets/fonts/AGaramondPro-Regular.woff';
-import CanvasTextWriter from './CanvasTextWriter';
+import CardDefault from './CardDefault';
+
+const { cardSizes } = config;
 
 const titleFont = new FontFace('Title', `url(${titleFontSRC})`);
 (document.fonts as any).add(titleFont);
@@ -33,29 +35,21 @@ const paragraphFont = new FontFace('Arial', `url(${paragraphFontSRC})`);
 
 // * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-const cardSize = {
-  width: 2000,
-  height: 2771,
-};
-
-const margin = cardSize.width - cardSize.width * 0.1;
-
 const resultDOM = document.getElementById('result');
 
 // # Templates
 
 const templates: ITemplates = {
-  ataque: null,
-  feitico: null,
-  gema: null,
-  golpe: null,
-  poder: null,
-  reliquia: null,
-  servo: null,
+  attack: null,
+  spell: null,
+  gem: null,
+  power: null,
+  relic: null,
+  minion: null,
 };
 
 const imageHelpers: IImageHelpers = {
-  eterIcon: null,
+  etherIcon: null,
 };
 
 const loadTemplateImage = (src: string, type: keyof ITemplates): Promise<void> => {
@@ -83,27 +77,16 @@ const loadHelperImage = (src: string, type: keyof IImageHelpers): Promise<void> 
 };
 
 const assetsToLoad = [
-  loadTemplateImage(templateAtaqueSrc, 'ataque'),
-  loadTemplateImage(templateFeiticoSrc, 'feitico'),
-  loadTemplateImage(templateGemaSrc, 'gema'),
-  loadTemplateImage(templateGolpeSrc, 'golpe'),
-  loadTemplateImage(templatePoderSrc, 'poder'),
-  loadTemplateImage(templateReliquiaSrc, 'reliquia'),
-  loadTemplateImage(templateServoSrc, 'servo'),
-  loadHelperImage(eterIconSrc, 'eterIcon'),
+  loadTemplateImage(templateAttackSrc, 'attack'),
+  loadTemplateImage(templateSpellSrc, 'spell'),
+  loadTemplateImage(templateGemSrc, 'gem'),
+  loadTemplateImage(templatePowerSrc, 'power'),
+  loadTemplateImage(templateRelicSrc, 'relic'),
+  loadTemplateImage(templateServoSrc, 'minion'),
+  loadHelperImage(etherIconSrc, 'etherIcon'),
   titleFont.load(),
   paragraphFont.load(),
 ];
-
-// * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-const getRealYFromPercent = (percent: number): number => {
-  return (percent / 100) * cardSize.height;
-};
-
-const getRealXFromPercent = (percent: number): number => {
-  return (percent / 100) * cardSize.width;
-};
 
 // * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -118,314 +101,207 @@ const createCanvasContext = (): CanvasRenderingContext2D | null => {
   return canvas.getContext('2d');
 };
 
-const writeCardName = (
-  ctx: CanvasRenderingContext2D,
-  text: string,
-  yPercent: number,
-  color: string
-) => {
-  const y = getRealYFromPercent(yPercent);
-  const x = getRealXFromPercent(50);
-
-  const writer = new CanvasTextWriter(ctx, imageHelpers, {
-    fillStyle: color,
-    textAlign: 'center',
-    font: "bold 100px 'Title'",
-  });
-
-  writer.writeText(text, x, y, margin);
-};
-
-const writeCharacterName = (ctx: CanvasRenderingContext2D, text: string) => {
-  const y = getRealYFromPercent(97);
-  const x = getRealXFromPercent(96);
-
-  const writer = new CanvasTextWriter(ctx, imageHelpers, {
-    fillStyle: '#FFFFFF',
-    textAlign: 'right',
-    font: "bold 55px 'Title'",
-  });
-
-  writer.writeText(text, x, y, margin);
-};
-
-const writeCost = (ctx: CanvasRenderingContext2D, text: string) => {
-  const y = getRealYFromPercent(9.3);
-  const x = getRealXFromPercent(90.5);
-
-  const writer = new CanvasTextWriter(ctx, imageHelpers, {
-    fillStyle: '#FFFFFF',
-    textAlign: 'center',
-    font: "bold 150px 'Title'",
-  });
-
-  writer.writeText(text, x, y, margin);
-};
-
-const writeLife = (ctx: CanvasRenderingContext2D, text: string) => {
-  const y = getRealYFromPercent(57);
-  const x = getRealXFromPercent(90);
-
-  const writer = new CanvasTextWriter(ctx, imageHelpers, {
-    fillStyle: '#FFFFFF',
-    textAlign: 'center',
-    font: "bold 160px 'Title'",
-  });
-
-  writer.writeText(text, x, y, margin);
-};
-
-const writeNemesis = (ctx: CanvasRenderingContext2D, text: string, yPercent: number) => {
-  const y = getRealYFromPercent(yPercent);
-  const x = getRealXFromPercent(50);
-
-  const writer = new CanvasTextWriter(ctx, imageHelpers, {
-    fillStyle: '#111111',
-    textAlign: 'center',
-    font: "bold 70px 'Title'",
-  });
-
-  writer.writeText(text, x, y, margin);
-};
-
-const writeLevel = (
-  ctx: CanvasRenderingContext2D,
-  text: string,
-  xPercent: number,
-  yPercent: number
-) => {
-  const y = getRealYFromPercent(yPercent);
-  const x = getRealXFromPercent(xPercent);
-
-  const writer = new CanvasTextWriter(ctx, imageHelpers, {
-    fillStyle: '#111111',
-    textAlign: 'center',
-    font: "bold 50px 'Title'",
-  });
-
-  writer.writeText(text, x, y, margin);
-};
-
-const writeDescription = (ctx: CanvasRenderingContext2D, text: string, yPercent: number) => {
-  const y = getRealYFromPercent(yPercent);
-  const x = getRealXFromPercent(50);
-
-  const writer = new CanvasTextWriter(ctx, imageHelpers, {
-    fillStyle: '#111111',
-    textAlign: 'center',
-    font: "74px 'Paragraph'",
-    verticalAlign: 'center',
-  });
-
-  writer.writeText(text, x, y, margin);
-};
-
 // * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-const generateAtaqueCard = (card: ICard_Ataque) => {
+const generateAttackCard = (card: ICard_Attack) => {
   const ctx = createCanvasContext();
-  if (!ctx || !templates.ataque) return;
+  if (!ctx || !templates.attack) return;
+
+  const cardDefault = new CardDefault(ctx, imageHelpers);
 
   // Template
-  ctx.drawImage(templates.ataque, 0, 0, cardSize.width, cardSize.height);
+  ctx.drawImage(templates.attack, 0, 0, cardSizes.default.width, cardSizes.default.height);
+  cardDefault.writeAttackLabel();
 
   // Name
-  writeCardName(ctx, card.name, 15, '#FFFFFF');
+  cardDefault.writeCardName(card.name, 15, '#FFFFFF');
 
   // Descrição
-  writeDescription(ctx, card.description, 60);
+  cardDefault.writeDescription(card.description, 60);
 
   // Nêmesis
-  writeNemesis(ctx, card.nemesis, 95.5);
+  cardDefault.writeNemesis(card.nemesis, 95.5);
 
   // Level
-  writeLevel(ctx, String(card.level), 93.8, 96.6);
+  cardDefault.writeLevel(String(card.level), 93.8, 96.6);
 };
 
-const generateFeiticoCard = (card: ICard_Feitico) => {
+const generateSpellCard = (card: ICard_Spell) => {
   const ctx = createCanvasContext();
-  if (!ctx || !templates.feitico) return;
+  if (!ctx || !templates.spell) return;
 
   const image = new Image();
   image.src = card.image;
   image.onload = () => {
-    if (!templates.feitico) return;
+    if (!templates.spell) return;
+
+    const cardDefault = new CardDefault(ctx, imageHelpers);
 
     // Imagem
-    ctx.drawImage(image, 0, 0, cardSize.width, cardSize.height);
+    ctx.drawImage(image, 0, 0, cardSizes.default.width, cardSizes.default.height);
 
     // Template
-    ctx.drawImage(templates.feitico, 0, 0, cardSize.width, cardSize.height);
+    ctx.drawImage(templates.spell, 0, 0, cardSizes.default.width, cardSizes.default.height);
+    cardDefault.writeSpellLabel();
 
     // Nome
-    writeCardName(ctx, card.name, 65, '#111111');
+    cardDefault.writeCardName(card.name, 65, '#111111');
 
     // Descrição
-    writeDescription(ctx, card.description, 80);
+    cardDefault.writeDescription(card.description, 80);
 
     // Nome do Personagem
-    if (card.characterName) writeCharacterName(ctx, card.characterName);
+    if (card.characterName) cardDefault.writeCharacterName(card.characterName);
 
     // Custo
-    writeCost(ctx, String(card.cost));
+    cardDefault.writeCost(String(card.cost));
   };
 };
 
-const generateGemaCard = (card: ICard_Gema) => {
+const generateGemCard = (card: ICard_Gem) => {
   const ctx = createCanvasContext();
   if (!ctx) return;
 
-  if (!ctx || !templates.gema) return;
+  if (!ctx || !templates.gem) return;
 
   const image = new Image();
   image.src = card.image;
   image.onload = () => {
-    if (!templates.gema) return;
+    if (!templates.gem) return;
+
+    const cardDefault = new CardDefault(ctx, imageHelpers);
 
     // Imagem
-    ctx.drawImage(image, 0, 0, cardSize.width, cardSize.height);
+    ctx.drawImage(image, 0, 0, cardSizes.default.width, cardSizes.default.height);
 
     // Template
-    ctx.drawImage(templates.gema, 0, 0, cardSize.width, cardSize.height);
+    ctx.drawImage(templates.gem, 0, 0, cardSizes.default.width, cardSizes.default.height);
+    cardDefault.writeGemLabel();
 
     // Nome
-    writeCardName(ctx, card.name, 65, '#111111');
+    cardDefault.writeCardName(card.name, 65, '#111111');
 
     // Descrição
-    writeDescription(ctx, card.description, 80);
+    cardDefault.writeDescription(card.description, 80);
 
     // Nome do Personagem
-    if (card.characterName) writeCharacterName(ctx, card.characterName);
+    if (card.characterName) cardDefault.writeCharacterName(card.characterName);
 
     // Custo
-    writeCost(ctx, String(card.cost));
+    cardDefault.writeCost(String(card.cost));
   };
 };
 
-const generateGolpeCard = (card: ICard_Golpe) => {
+const generatePowerCard = (card: ICard_Power) => {
   const ctx = createCanvasContext();
-  if (!ctx || !templates.golpe) return;
+  if (!ctx || !templates.power) return;
+
+  const cardDefault = new CardDefault(ctx, imageHelpers);
 
   // Template
-  ctx.drawImage(templates.golpe, 0, 0, cardSize.width, cardSize.height);
+  ctx.drawImage(templates.power, 0, 0, cardSizes.default.width, cardSizes.default.height);
+  cardDefault.writePowerLabel();
 
   // Name
-  writeCardName(ctx, card.name, 15, '#FFFFFF');
+  cardDefault.writeCardName(card.name, 15, '#FFFFFF');
 
   // Descrição
-  writeDescription(ctx, card.description, 60);
+  cardDefault.writeDescription(card.description, 60);
 
   // Nêmesis
-  writeNemesis(ctx, card.nemesis, 95.5);
+  cardDefault.writeNemesis(card.nemesis, 95.5);
 
   // Level
-  writeLevel(ctx, String(card.level), 94.8, 96.6);
+  cardDefault.writeLevel(String(card.level), 94.6, 96.4);
 };
 
-const generatePoderCard = (card: ICard_Poder) => {
+const generateRelicCard = (card: ICard_Relic) => {
   const ctx = createCanvasContext();
-  if (!ctx || !templates.poder) return;
-
-  // Template
-  ctx.drawImage(templates.poder, 0, 0, cardSize.width, cardSize.height);
-
-  // Name
-  writeCardName(ctx, card.name, 15, '#FFFFFF');
-
-  // Descrição
-  writeDescription(ctx, card.description, 60);
-
-  // Nêmesis
-  writeNemesis(ctx, card.nemesis, 95.5);
-
-  // Level
-  writeLevel(ctx, String(card.level), 94.6, 96.4);
-};
-
-const generateReliquiaCard = (card: ICard_Reliquia) => {
-  const ctx = createCanvasContext();
-  if (!ctx || !templates.reliquia) return;
+  if (!ctx || !templates.relic) return;
 
   const image = new Image();
   image.src = card.image;
   image.onload = () => {
-    if (!templates.reliquia) return;
+    if (!templates.relic) return;
+
+    const cardDefault = new CardDefault(ctx, imageHelpers);
 
     // Imagem
-    ctx.drawImage(image, 0, 0, cardSize.width, cardSize.height);
+    ctx.drawImage(image, 0, 0, cardSizes.default.width, cardSizes.default.height);
 
     // Template
-    ctx.drawImage(templates.reliquia, 0, 0, cardSize.width, cardSize.height);
+    ctx.drawImage(templates.relic, 0, 0, cardSizes.default.width, cardSizes.default.height);
+    cardDefault.writeRelicLabel();
 
     // Nome
-    writeCardName(ctx, card.name, 65, '#111111');
+    cardDefault.writeCardName(card.name, 65, '#111111');
 
     // Descrição
-    writeDescription(ctx, card.description, 80);
+    cardDefault.writeDescription(card.description, 80);
 
     // Nome do Personagem
-    if (card.characterName) writeCharacterName(ctx, card.characterName);
+    if (card.characterName) cardDefault.writeCharacterName(card.characterName);
 
     // Custo
-    writeCost(ctx, String(card.cost));
+    cardDefault.writeCost(String(card.cost));
   };
 };
 
-const generateServoCard = (card: ICard_Servo) => {
+const generateMinionCard = (card: ICard_Minion) => {
   const ctx = createCanvasContext();
-  if (!ctx || !templates.servo) return;
+  if (!ctx || !templates.minion) return;
 
   const image = new Image();
   image.src = card.image;
   image.onload = () => {
-    if (!templates.servo) return;
+    if (!templates.minion) return;
+
+    const cardDefault = new CardDefault(ctx, imageHelpers);
 
     // Imagem
-    ctx.drawImage(image, 0, 0, cardSize.width, cardSize.height);
+    ctx.drawImage(image, 0, 0, cardSizes.default.width, cardSizes.default.height);
 
     // Template
-    ctx.drawImage(templates.servo, 0, 0, cardSize.width, cardSize.height);
+    ctx.drawImage(templates.minion, 0, 0, cardSizes.default.width, cardSizes.default.height);
+    cardDefault.writeMinionLabel();
 
     // Nome
-    writeCardName(ctx, card.name, 64, '#111111');
+    cardDefault.writeCardName(card.name, 64, '#111111');
 
     // Descrição
-    writeDescription(ctx, card.description, 81);
+    cardDefault.writeDescription(card.description, 81);
 
     // Vida
-    writeLife(ctx, String(card.life));
+    cardDefault.writeLife(String(card.life));
 
     // Nêmesis
-    writeNemesis(ctx, card.nemesis, 95.5);
+    cardDefault.writeNemesis(card.nemesis, 95.5);
 
     // Level
-    writeLevel(ctx, String(card.level), 94.4, 96.6);
+    cardDefault.writeLevel(String(card.level), 94.4, 96.6);
   };
 };
 
 const generateCards = () => {
   cards.forEach((card) => {
     switch (card.type) {
-      case 'ataque':
-        return generateAtaqueCard(card);
+      case 'attack':
+        return generateAttackCard(card);
 
-      case 'feitico':
-        return generateFeiticoCard(card);
+      case 'spell':
+        return generateSpellCard(card);
 
-      case 'gema':
-        return generateGemaCard(card);
+      case 'gem':
+        return generateGemCard(card);
 
-      case 'golpe':
-        return generateGolpeCard(card);
+      case 'power':
+        return generatePowerCard(card);
 
-      case 'poder':
-        return generatePoderCard(card);
+      case 'relic':
+        return generateRelicCard(card);
 
-      case 'reliquia':
-        return generateReliquiaCard(card);
-
-      case 'servo':
-        return generateServoCard(card);
+      case 'minion':
+        return generateMinionCard(card);
 
       default:
         break;

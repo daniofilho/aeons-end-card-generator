@@ -117,10 +117,10 @@ export default class CanvasTextWriter {
         break;
 
       case 'icon':
-        if (!this.imageHelpers.eterIcon) return;
+        if (!this.imageHelpers.etherIcon) return;
 
         const iconSize = parseInt(this.ctx.font.match(/\d+/)?.[0] || '80'); // Get font size
-        this.ctx.drawImage(this.imageHelpers.eterIcon, x, y - iconSize * 0.8, iconSize, iconSize);
+        this.ctx.drawImage(this.imageHelpers.etherIcon, x, y - iconSize * 0.8, iconSize, iconSize);
 
         break;
 

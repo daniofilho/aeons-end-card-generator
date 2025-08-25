@@ -1,15 +1,14 @@
 export interface ITemplates {
-  ataque: HTMLImageElement | null;
-  feitico: HTMLImageElement | null;
-  gema: HTMLImageElement | null;
-  golpe: HTMLImageElement | null;
-  poder: HTMLImageElement | null;
-  reliquia: HTMLImageElement | null;
-  servo: HTMLImageElement | null;
+  attack: HTMLImageElement | null;
+  spell: HTMLImageElement | null;
+  gem: HTMLImageElement | null;
+  power: HTMLImageElement | null;
+  relic: HTMLImageElement | null;
+  minion: HTMLImageElement | null;
 }
 
 export interface IImageHelpers {
-  eterIcon: HTMLImageElement | null;
+  etherIcon: HTMLImageElement | null;
 }
 
 export interface IFontParameters {
@@ -28,6 +27,12 @@ export interface IWord {
 export interface ILine {
   word: IWord[];
   y: number;
+}
+
+export interface ICardSize {
+  width: number;
+  height: number;
+  margin: number;
 }
 
 // * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -50,43 +55,38 @@ interface ICardCommonNemesisFields {
 
 // # Jogador
 
-interface ICard_Feitico extends ICardCommonFields, ICardCommonPlayerFields {
-  type: 'feitico';
+interface ICard_Spell extends ICardCommonFields, ICardCommonPlayerFields {
+  type: 'spell';
 }
 
-interface ICard_Gema extends ICardCommonFields, ICardCommonPlayerFields {
-  type: 'gema';
+interface ICard_Gem extends ICardCommonFields, ICardCommonPlayerFields {
+  type: 'gem';
 }
 
-interface ICard_Reliquia extends ICardCommonFields, ICardCommonPlayerFields {
-  type: 'reliquia';
+interface ICard_Relic extends ICardCommonFields, ICardCommonPlayerFields {
+  type: 'relic';
 }
 
 // # Nêmesis
 
-interface ICard_Ataque extends ICardCommonFields, ICardCommonNemesisFields {
-  type: 'ataque';
+interface ICard_Attack extends ICardCommonFields, ICardCommonNemesisFields {
+  type: 'attack';
 }
 
-interface ICard_Golpe extends ICardCommonFields, ICardCommonNemesisFields {
-  type: 'golpe';
+interface ICard_Power extends ICardCommonFields, ICardCommonNemesisFields {
+  type: 'power';
 }
 
-interface ICard_Poder extends ICardCommonFields, ICardCommonNemesisFields {
-  type: 'poder';
-}
-
-interface ICard_Servo extends ICardCommonFields, ICardCommonNemesisFields {
-  type: 'servo';
+interface ICard_Minion extends ICardCommonFields, ICardCommonNemesisFields {
+  type: 'minion';
   image: string;
   life: number;
 }
 
 export type ICard =
-  | ICard_Ataque
-  | ICard_Feitico
-  | ICard_Gema
-  | ICard_Golpe
-  | ICard_Poder
-  | ICard_Reliquia
-  | ICard_Servo;
+  | ICard_Attack
+  | ICard_Spell
+  | ICard_Gem
+  | ICard_Power
+  | ICard_Relic
+  | ICard_Minion;
