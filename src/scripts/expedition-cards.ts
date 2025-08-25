@@ -18,7 +18,7 @@ const cards: ICard[] = [
       '<b>Each</b> <b>player</b> destroys their <b>most</b> expensive card in hand. Unleash %% for each player that destroyed a card that costs less than 3 %% . \n OR \n Place the <b>most</b> recently discarded minion card in the nemesis discard pile back into play.',
 
     life: 6,
-    image: 'http://localhost:5173/images/expedition-cards/servo-teste.jpg',
+    image: '/images/expedition-cards/servo-teste.jpg',
     level: 9,
     name: 'Nome muito grande mesmo',
     type: 'minion',
@@ -29,7 +29,7 @@ const cards: ICard[] = [
       '<b>Each</b> <b>player</b> destroys their <b>most</b> \n The nemesis discard pile back into play.',
 
     life: 6,
-    image: 'http://localhost:5173/images/expedition-cards/servo-teste.jpg',
+    image: '/images/expedition-cards/servo-teste.jpg',
     level: 9,
     name: 'Nome muito grande mesmo',
     type: 'minion',
@@ -48,7 +48,7 @@ const cards: ICard[] = [
       '<b>Each</b> <b>player</b> destroys their <b>most</b> expensive card in hand. Unleash %% for each player that destroyed a card that costs less than 3 %% . \n OR \n Place the <b>most</b> recently discarded minion card in the nemesis discard pile back into play.',
 
     cost: 9,
-    image: 'http://localhost:5173/images/expedition-cards/feitico-teste.jpg',
+    image: '/images/expedition-cards/feitico-teste.jpg',
     name: 'Nome muito grande mesmo',
     characterName: 'Gustave',
   },
@@ -58,7 +58,7 @@ const cards: ICard[] = [
     description:
       '<b>Each</b> <b>player</b> destroys their <b>most</b> expensive card in hand. Unleash %% for each player that destroyed a card that costs less than 3 %% . \n OR \n Place the <b>most</b> recently discarded minion card in the nemesis discard pile back into play.',
 
-    image: 'http://localhost:5173/images/expedition-cards/gema-teste.jpg',
+    image: '/images/expedition-cards/gema-teste.jpg',
     name: 'Nome muito grande mesmo',
   },
   {
@@ -66,7 +66,7 @@ const cards: ICard[] = [
     description:
       '<b>Each</b> <b>player</b> destroys their <b>most</b> expensive card in hand. Unleash %% for each player that destroyed a card that costs less than 3 %% . \n OR \n Place the <b>most</b> recently discarded minion card in the nemesis discard pile back into play.',
 
-    image: 'http://localhost:5173/images/expedition-cards/reliquia-teste.jpg',
+    image: '/images/expedition-cards/reliquia-teste.jpg',
     name: 'Nome muito grande mesmo',
     type: 'relic',
   },
