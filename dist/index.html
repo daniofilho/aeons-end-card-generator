@@ -11,7 +11,7 @@
 
     <title>Aeon's End Card Generator</title>
 
-    <link rel="icon" type="image/png" href="/assets/favicon-6wgWA_5B.png" />
+    <link rel="icon" type="image/png" href="./assets/favicon-6wgWA_5B.png" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -20,12 +20,25 @@
       rel="stylesheet"
     />
 
-    <script type="module" crossorigin src="/assets/index-CzyrJLdt.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-xv4t9hkX.css">
+    <script type="module" crossorigin src="./assets/index-BCofr-dq.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-Dxbhsvs0.css">
   </head>
 
   <body>
-    <main id="result"></main>
+    <header>
+      <p>Selecione o arquivo .xlsx para processar as cartas</p>
 
+      <p>(<a href="#!">download do modelo</a>)</p>
+      
+      <form id="form-upload">
+        <input type="file" id="file" accept=".xlsx" />
+        <button type="submit" id="submit" disabled>Processar</button>
+      <form>
+    </header>
+
+    <div id="loader">Aguarde, processando arquivo...</div>
+
+    <main id="result"></main>
+ 
   </body>
 </html>

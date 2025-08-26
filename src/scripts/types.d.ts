@@ -35,6 +35,17 @@ export interface ICardSize {
   margin: number;
 }
 
+export type SpreadsheetFieldType =
+  | 'type'
+  | 'name'
+  | 'description'
+  | 'characterName'
+  | 'image'
+  | 'cost'
+  | 'nemesis'
+  | 'life'
+  | 'level';
+
 // * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 interface ICardCommonFields {

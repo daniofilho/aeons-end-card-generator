@@ -37,6 +37,8 @@ export default class CanvasTextWriter {
   // * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   private detectWord = (text: string): IWord => {
+    console.log({ text });
+
     // <b>bold</b>
     if (text.startsWith('<b>') && text.endsWith('</b>')) {
       text = text.replace(/<\/?b>/g, '');
@@ -153,6 +155,23 @@ export default class CanvasTextWriter {
 
   // Separa o texto em linhas de acordo com o limite máximo da largura
   writeText = (text: string, x: number, y: number, maxWidth: number) => {
+    // Se reconhecer alguma frase dentro de um <b>, por exemplo: <b>frase separada</b>
+    // pega cada palavra dentro dessa frase e encapsula com <b>{T}</b> para que seja possível a detecção
+    // de negrito
+    text = text.replace(/<b>(.*?)<\/b>/g, (_, p1) => {
+      return p1
+        .split(' ')
+        .map((word: string) => `<b>${word}</b>`)
+        .join(' ');
+    });
+
+    // Reconhece os "\n" e separa ele com espaços em volta para garantir que eles sejam reconhecidos nos próximos passos
+    // de forma separada
+    text = text.replace(/(\S)\n(\S)/g, '$1 \n $2');
+    text = text.replace(/(\S)\n/g, '$1 \n');
+    text = text.replace(/\n(\S)/g, '\n $1');
+
+    // Agora separa por espaços
     const words = text.split(' ');
 
     let lines: ILine[] = [];

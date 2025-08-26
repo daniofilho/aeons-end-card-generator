@@ -1,4 +1,5 @@
-import cards from './expedition-cards';
+import readXlsxFile from 'read-excel-file';
+
 import {
   ITemplates,
   ICard_Attack,
@@ -8,6 +9,7 @@ import {
   ICard_Relic,
   ICard_Minion,
   IImageHelpers,
+  ICard,
 } from './types';
 
 import config from './config';
@@ -19,7 +21,7 @@ import templatePowerSrc from '../assets/images/templates/power.png';
 import templateRelicSrc from '../assets/images/templates/relic.png';
 import templateServoSrc from '../assets/images/templates/minion.png';
 
-import etherIconSrc from '../assets/images/icone-eter.png';
+import etherIconSrc from '../assets/images/ether-icon.png';
 
 import titleFontSRC from '../assets/fonts/Constantine.woff';
 import paragraphFontSRC from '../assets/fonts/AGaramondPro-Regular.woff';
@@ -35,7 +37,13 @@ const paragraphFont = new FontFace('Arial', `url(${paragraphFontSRC})`);
 
 // * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+const loaderDOM = document.getElementById('loader');
+if (loaderDOM) loaderDOM.style.display = 'none';
+
 const resultDOM = document.getElementById('result');
+
+const form = document.getElementById('form-upload');
+const submitButton = document.getElementById('submit');
 
 // # Templates
 
@@ -114,7 +122,7 @@ const generateAttackCard = (card: ICard_Attack) => {
   cardDefault.writeAttackLabel();
 
   // Name
-  cardDefault.writeCardName(card.name, 15, '#FFFFFF');
+  cardDefault.writeCardName(card.name, 14, '#FFFFFF');
 
   // Descrição
   cardDefault.writeDescription(card.description, 60);
@@ -203,7 +211,7 @@ const generatePowerCard = (card: ICard_Power) => {
   cardDefault.writePowerLabel();
 
   // Name
-  cardDefault.writeCardName(card.name, 15, '#FFFFFF');
+  cardDefault.writeCardName(card.name, 14, '#FFFFFF');
 
   // Descrição
   cardDefault.writeDescription(card.description, 60);
@@ -282,7 +290,9 @@ const generateMinionCard = (card: ICard_Minion) => {
   };
 };
 
-const generateCards = () => {
+const generateCards = (cards: ICard[]) => {
+  // TODO colocar esses geradores como Promise
+
   cards.forEach((card) => {
     switch (card.type) {
       case 'attack':
@@ -307,12 +317,186 @@ const generateCards = () => {
         break;
     }
   });
+
+  if (loaderDOM) loaderDOM.style.display = 'none';
+};
+
+// * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+const handleFormSubmit = (e: Event) => {
+  e.preventDefault();
+
+  const fileInput = document.getElementById('file') as HTMLInputElement;
+
+  if (!fileInput?.files?.length) {
+    alert('Selecione um arquivo csv!');
+    return;
+  }
+
+  const file = fileInput.files?.[0];
+
+  if (!file) {
+    alert('Selecione um arquivo csv no formato válido!');
+    return;
+  }
+
+  try {
+    if (loaderDOM) loaderDOM.style.display = 'block';
+
+    // Lê o arquivo
+    readXlsxFile(file).then((rows) => {
+      const cardIndexes = {
+        type: 0,
+        name: 0,
+        description: 0,
+        characterName: 0,
+        image: 0,
+        cost: 0,
+        nemesis: 0,
+        level: 0,
+        life: 0,
+      };
+
+      // identifica quais os campos/indices de coluna de acordo com a primeira linha
+      // (pro caso de mudar a ordem das colunas sem querer no xlsx)
+      rows.forEach((row, rowIndex) => {
+        row.forEach((field, index) => {
+          switch (field) {
+            case 'type':
+              cardIndexes.type = index;
+              break;
+
+            case 'name':
+              cardIndexes.name = index;
+              break;
+            case 'description':
+              cardIndexes.description = index;
+              break;
+            case 'characterName':
+              cardIndexes.characterName = index;
+              break;
+            case 'image':
+              cardIndexes.image = index;
+              break;
+            case 'cost':
+              cardIndexes.cost = index;
+              break;
+            case 'nemesis':
+              cardIndexes.nemesis = index;
+              break;
+            case 'level':
+              cardIndexes.level = index;
+              break;
+
+            default:
+              break;
+          }
+        });
+
+        if (rowIndex > 0) return;
+      });
+
+      // Agora que sei onde estão todos os campos, monto o objeto dos cards
+      const cards: ICard[] = [];
+
+      rows.forEach((row, rowIndex) => {
+        if (rowIndex === 0) return; // Skip header row
+
+        const cardType = row[cardIndexes.type] as ICard['type'];
+        const cardName = row[cardIndexes.name] as string;
+        const cardDescription = row[cardIndexes.description] as string;
+        const cardImage = row[cardIndexes.image] as string;
+        const cardCost = row[cardIndexes.cost] as number;
+        const cardCharacterName = row[cardIndexes.characterName] as string;
+        const cardNemesis = row[cardIndexes.nemesis] as string;
+        const cardLevel = row[cardIndexes.level] as number;
+        const cardLife = row[cardIndexes.life] as number;
+
+        switch (cardType) {
+          case 'attack':
+            cards.push({
+              type: 'attack',
+              name: cardName,
+              description: cardDescription,
+              nemesis: cardNemesis,
+              level: cardLevel,
+            } as ICard_Attack);
+            break;
+
+          case 'spell':
+            cards.push({
+              type: 'spell',
+              name: cardName,
+              description: cardDescription,
+              image: cardImage,
+              cost: cardCost,
+              characterName: cardCharacterName,
+            } as ICard_Spell);
+            break;
+
+          case 'gem':
+            cards.push({
+              type: 'gem',
+              name: cardName,
+              description: cardDescription,
+              image: cardImage,
+              cost: cardCost,
+              characterName: cardCharacterName,
+            } as ICard_Gem);
+            break;
+
+          case 'power':
+            cards.push({
+              type: 'power',
+              name: cardName,
+              description: cardDescription,
+              nemesis: cardNemesis,
+              level: cardLevel,
+            } as ICard_Power);
+            break;
+
+          case 'relic':
+            cards.push({
+              type: 'relic',
+              name: cardName,
+              description: cardDescription,
+              image: cardImage,
+              cost: cardCost,
+              characterName: cardCharacterName,
+            } as ICard_Relic);
+            break;
+
+          case 'minion':
+            cards.push({
+              type: 'minion',
+              name: cardName,
+              description: cardDescription,
+              image: cardImage,
+              nemesis: cardNemesis,
+              level: cardLevel,
+              life: cardLife,
+            } as ICard_Minion);
+            break;
+
+          default:
+            break;
+        }
+      });
+
+      generateCards(cards);
+    });
+  } catch (error) {
+    console.warn(error);
+    alert('Arquivo inválido!');
+  }
 };
 
 // * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 window.onload = () => {
   Promise.all(assetsToLoad).then(() => {
-    generateCards();
+    if (submitButton) submitButton.removeAttribute('disabled');
   });
+
+  form?.addEventListener('submit', handleFormSubmit, false);
 };

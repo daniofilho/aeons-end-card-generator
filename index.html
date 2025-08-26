@@ -24,8 +24,21 @@
   </head>
 
   <body>
-    <main id="result"></main>
+    <header>
+      <p>Selecione o arquivo .xlsx para processar as cartas</p>
 
+      <p>(<a href="#!">download do modelo</a>)</p>
+      
+      <form id="form-upload">
+        <input type="file" id="file" accept=".xlsx" />
+        <button type="submit" id="submit" disabled>Processar</button>
+      <form>
+    </header>
+
+    <div id="loader">Aguarde, processando arquivo...</div>
+
+    <main id="result"></main>
+ 
     <script type="module" src="src/scripts/main.ts"></script>
   </body>
 </html>

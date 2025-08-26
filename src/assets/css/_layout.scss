@@ -13,3 +13,19 @@ main {
     max-width: 100%;
   }
 }
+
+header {
+  margin: 2rem auto;
+  width: 500px;
+
+  p,
+  a {
+    color: #fff;
+  }
+
+  form {
+    display: flex;
+    flex-direction: row;
+    gap: 2rem;
+  }
+}

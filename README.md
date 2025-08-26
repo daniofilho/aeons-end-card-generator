@@ -51,3 +51,28 @@ Use at your own risk.
 `yarn preview` => Preview production build on a local server running on http://localhost:4173/;
 
 `yarn build` => Create production build on `/dist` folder;
+
+---
+
+A organizar:
+
+montagem do excel:
+
+```
+  Padrão:
+
+  Bold:
+  <b>Each</b> (coloque espaços para detectar como uma palavra)
+
+  Quebra de linha:
+  \n (coloque espaços para detectar como uma palavra)
+
+  Ícone de Éter:
+  %% (coloque espaços para detectar como uma palavra)
+
+```
+
+TODO
+
+[ ] Reconhecer frase dentro de um <b>
+[ ] reconhecer \n sem precisar separar com espaços
