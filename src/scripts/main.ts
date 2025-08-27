@@ -138,6 +138,8 @@ const generateSpellCard = (card: ICard_Spell) => {
   const ctx = createCanvasContext();
   if (!ctx || !templates.spell) return;
 
+  console.log(card.image);
+
   const image = new Image();
   image.src = card.image;
   image.onload = () => {

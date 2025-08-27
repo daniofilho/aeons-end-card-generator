@@ -20,23 +20,26 @@
       rel="stylesheet"
     />
 
-    <script type="module" crossorigin src="./assets/index-BCofr-dq.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-Dxbhsvs0.css">
+    <script type="module" crossorigin src="./assets/index-Cn1CvVFa.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-CusDxW4C.css">
   </head>
 
   <body>
     <header>
-      <p>Selecione o arquivo .xlsx para processar as cartas</p>
+      <p>Select the .xlsx file to process</p>
 
-      <p>(<a href="#!">download do modelo</a>)</p>
+      <p>(<a href="/cards-template.xlsx">download template</a>)</p>
       
       <form id="form-upload">
         <input type="file" id="file" accept=".xlsx" />
-        <button type="submit" id="submit" disabled>Processar</button>
-      <form>
+        <button type="submit" id="submit" disabled>Start</button>
+      </form>
+      
+      <div id="loader">
+        <p>Please wait, processing file, this will take a while...</p>
+      </div>
     </header>
 
-    <div id="loader">Aguarde, processando arquivo...</div>
 
     <main id="result"></main>
  
