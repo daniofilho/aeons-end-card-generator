@@ -306,8 +306,6 @@ const generateMinionCard = async (card: ICard_Minion): Promise<void> => {
     image.onload = () => {
       if (!templates.minion) return;
 
-      console.log({ card });
-
       const cardDefault = new CardDefault(ctx, imageHelpers);
 
       // Imagem
@@ -445,7 +443,6 @@ const handleFormSubmit = (e: Event) => {
         if (rowIndex > 0) return;
 
         row.forEach((field, index) => {
-          console.log({ field, index });
           switch (field) {
             case 'type':
               cardIndexes.type = index;
