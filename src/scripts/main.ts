@@ -306,6 +306,8 @@ const generateMinionCard = async (card: ICard_Minion): Promise<void> => {
     image.onload = () => {
       if (!templates.minion) return;
 
+      console.log({ card });
+
       const cardDefault = new CardDefault(ctx, imageHelpers);
 
       // Imagem
@@ -440,7 +442,10 @@ const handleFormSubmit = (e: Event) => {
       // identifica quais os campos/indices de coluna de acordo com a primeira linha
       // (pro caso de mudar a ordem das colunas sem querer no xlsx)
       rows.forEach((row, rowIndex) => {
+        if (rowIndex > 0) return;
+
         row.forEach((field, index) => {
+          console.log({ field, index });
           switch (field) {
             case 'type':
               cardIndexes.type = index;
@@ -481,8 +486,6 @@ const handleFormSubmit = (e: Event) => {
               break;
           }
         });
-
-        if (rowIndex > 0) return;
       });
 
       // Agora que sei onde estão todos os campos, monto o objeto dos cards
