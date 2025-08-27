@@ -1,4 +1,6 @@
 import readXlsxFile from 'read-excel-file';
+import jszip from 'jszip';
+import saveAs from 'file-saver';
 
 import {
   ITemplates,
@@ -41,6 +43,7 @@ const loaderDOM = document.getElementById('loader');
 if (loaderDOM) loaderDOM.style.display = 'none';
 
 const resultDOM = document.getElementById('result');
+const consoleDOM = document.getElementById('console');
 
 const form = document.getElementById('form-upload');
 const submitButton = document.getElementById('submit');
@@ -61,7 +64,7 @@ const imageHelpers: IImageHelpers = {
 };
 
 const loadTemplateImage = (src: string, type: keyof ITemplates): Promise<void> => {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve: () => void, reject: OnErrorEventHandler) => {
     const image = new Image();
     image.src = src;
     image.onload = () => {
@@ -73,7 +76,7 @@ const loadTemplateImage = (src: string, type: keyof ITemplates): Promise<void> =
 };
 
 const loadHelperImage = (src: string, type: keyof IImageHelpers): Promise<void> => {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve: () => void, reject: OnErrorEventHandler) => {
     const image = new Image();
     image.src = src;
     image.onload = () => {
@@ -109,6 +112,14 @@ const createCanvasContext = (): CanvasRenderingContext2D | null => {
   return canvas.getContext('2d');
 };
 
+const logError = (error: string): void => {
+  if (!consoleDOM) return;
+
+  let log = consoleDOM.innerHTML;
+  log += `<p>${error}</p>`;
+  consoleDOM.innerHTML = log;
+};
+
 // * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 const generateAttackCard = (card: ICard_Attack) => {
@@ -134,72 +145,90 @@ const generateAttackCard = (card: ICard_Attack) => {
   cardDefault.writeLevel(String(card.level), 93.8, 96.6);
 };
 
-const generateSpellCard = (card: ICard_Spell) => {
-  const ctx = createCanvasContext();
-  if (!ctx || !templates.spell) return;
+const generateSpellCard = async (card: ICard_Spell): Promise<void> => {
+  return new Promise((resolve: () => void, reject: () => void) => {
+    const ctx = createCanvasContext();
+    if (!ctx || !templates.spell) return;
 
-  console.log(card.image);
+    const image = new Image();
+    image.src = card.image;
+    image.onload = () => {
+      if (!templates.spell) return;
 
-  const image = new Image();
-  image.src = card.image;
-  image.onload = () => {
-    if (!templates.spell) return;
+      const cardDefault = new CardDefault(ctx, imageHelpers);
 
-    const cardDefault = new CardDefault(ctx, imageHelpers);
+      // Imagem
+      ctx.drawImage(image, 0, 0, cardSizes.default.width, cardSizes.default.height);
 
-    // Imagem
-    ctx.drawImage(image, 0, 0, cardSizes.default.width, cardSizes.default.height);
+      // Template
+      ctx.drawImage(templates.spell, 0, 0, cardSizes.default.width, cardSizes.default.height);
+      cardDefault.writeSpellLabel();
 
-    // Template
-    ctx.drawImage(templates.spell, 0, 0, cardSizes.default.width, cardSizes.default.height);
-    cardDefault.writeSpellLabel();
+      // Nome
+      cardDefault.writeCardName(card.name, 65, '#111111');
 
-    // Nome
-    cardDefault.writeCardName(card.name, 65, '#111111');
+      // Descrição
+      cardDefault.writeDescription(card.description, 80);
 
-    // Descrição
-    cardDefault.writeDescription(card.description, 80);
+      // Nome do Personagem
+      if (card.characterName) cardDefault.writeCharacterName(card.characterName);
 
-    // Nome do Personagem
-    if (card.characterName) cardDefault.writeCharacterName(card.characterName);
+      // Custo
+      cardDefault.writeCost(String(card.cost));
 
-    // Custo
-    cardDefault.writeCost(String(card.cost));
-  };
+      resolve();
+    };
+
+    image.onerror = () => {
+      console.warn('card image error:', { card });
+      logError(`"${card.name}" could not load image: "${card.image}"`);
+      reject();
+    };
+  });
 };
 
-const generateGemCard = (card: ICard_Gem) => {
-  const ctx = createCanvasContext();
-  if (!ctx) return;
+const generateGemCard = async (card: ICard_Gem): Promise<void> => {
+  return new Promise((resolve: () => void, reject: () => void) => {
+    const ctx = createCanvasContext();
+    if (!ctx) return;
 
-  if (!ctx || !templates.gem) return;
+    if (!ctx || !templates.gem) return;
 
-  const image = new Image();
-  image.src = card.image;
-  image.onload = () => {
-    if (!templates.gem) return;
+    const image = new Image();
+    image.src = card.image;
+    image.onload = () => {
+      if (!templates.gem) return;
 
-    const cardDefault = new CardDefault(ctx, imageHelpers);
+      const cardDefault = new CardDefault(ctx, imageHelpers);
 
-    // Imagem
-    ctx.drawImage(image, 0, 0, cardSizes.default.width, cardSizes.default.height);
+      // Imagem
+      ctx.drawImage(image, 0, 0, cardSizes.default.width, cardSizes.default.height);
 
-    // Template
-    ctx.drawImage(templates.gem, 0, 0, cardSizes.default.width, cardSizes.default.height);
-    cardDefault.writeGemLabel();
+      // Template
+      ctx.drawImage(templates.gem, 0, 0, cardSizes.default.width, cardSizes.default.height);
+      cardDefault.writeGemLabel();
 
-    // Nome
-    cardDefault.writeCardName(card.name, 65, '#111111');
+      // Nome
+      cardDefault.writeCardName(card.name, 65, '#111111');
 
-    // Descrição
-    cardDefault.writeDescription(card.description, 80);
+      // Descrição
+      cardDefault.writeDescription(card.description, 80);
 
-    // Nome do Personagem
-    if (card.characterName) cardDefault.writeCharacterName(card.characterName);
+      // Nome do Personagem
+      if (card.characterName) cardDefault.writeCharacterName(card.characterName);
 
-    // Custo
-    cardDefault.writeCost(String(card.cost));
-  };
+      // Custo
+      cardDefault.writeCost(String(card.cost));
+
+      resolve();
+    };
+
+    image.onerror = () => {
+      console.warn('card image error:', { card });
+      logError(`"${card.name}" could not load image: "${card.image}"`);
+      reject();
+    };
+  });
 };
 
 const generatePowerCard = (card: ICard_Power) => {
@@ -225,100 +254,146 @@ const generatePowerCard = (card: ICard_Power) => {
   cardDefault.writeLevel(String(card.level), 94.6, 96.4);
 };
 
-const generateRelicCard = (card: ICard_Relic) => {
-  const ctx = createCanvasContext();
-  if (!ctx || !templates.relic) return;
+const generateRelicCard = async (card: ICard_Relic): Promise<void> => {
+  return new Promise((resolve: () => void, reject: () => void) => {
+    const ctx = createCanvasContext();
+    if (!ctx || !templates.relic) return;
 
-  const image = new Image();
-  image.src = card.image;
-  image.onload = () => {
-    if (!templates.relic) return;
+    const image = new Image();
+    image.src = card.image;
+    image.onload = () => {
+      if (!templates.relic) return;
 
-    const cardDefault = new CardDefault(ctx, imageHelpers);
+      const cardDefault = new CardDefault(ctx, imageHelpers);
 
-    // Imagem
-    ctx.drawImage(image, 0, 0, cardSizes.default.width, cardSizes.default.height);
+      // Imagem
+      ctx.drawImage(image, 0, 0, cardSizes.default.width, cardSizes.default.height);
 
-    // Template
-    ctx.drawImage(templates.relic, 0, 0, cardSizes.default.width, cardSizes.default.height);
-    cardDefault.writeRelicLabel();
+      // Template
+      ctx.drawImage(templates.relic, 0, 0, cardSizes.default.width, cardSizes.default.height);
+      cardDefault.writeRelicLabel();
 
-    // Nome
-    cardDefault.writeCardName(card.name, 65, '#111111');
+      // Nome
+      cardDefault.writeCardName(card.name, 65, '#111111');
 
-    // Descrição
-    cardDefault.writeDescription(card.description, 80);
+      // Descrição
+      cardDefault.writeDescription(card.description, 80);
 
-    // Nome do Personagem
-    if (card.characterName) cardDefault.writeCharacterName(card.characterName);
+      // Nome do Personagem
+      if (card.characterName) cardDefault.writeCharacterName(card.characterName);
 
-    // Custo
-    cardDefault.writeCost(String(card.cost));
-  };
-};
+      // Custo
+      cardDefault.writeCost(String(card.cost));
 
-const generateMinionCard = (card: ICard_Minion) => {
-  const ctx = createCanvasContext();
-  if (!ctx || !templates.minion) return;
+      resolve();
+    };
 
-  const image = new Image();
-  image.src = card.image;
-  image.onload = () => {
-    if (!templates.minion) return;
-
-    const cardDefault = new CardDefault(ctx, imageHelpers);
-
-    // Imagem
-    ctx.drawImage(image, 0, 0, cardSizes.default.width, cardSizes.default.height);
-
-    // Template
-    ctx.drawImage(templates.minion, 0, 0, cardSizes.default.width, cardSizes.default.height);
-    cardDefault.writeMinionLabel();
-
-    // Nome
-    cardDefault.writeCardName(card.name, 64, '#111111');
-
-    // Descrição
-    cardDefault.writeDescription(card.description, 81);
-
-    // Vida
-    cardDefault.writeLife(String(card.life));
-
-    // Nêmesis
-    cardDefault.writeNemesis(card.nemesis, 95.5);
-
-    // Level
-    cardDefault.writeLevel(String(card.level), 94.4, 96.6);
-  };
-};
-
-const generateCards = (cards: ICard[]) => {
-  // TODO colocar esses geradores como Promise
-
-  cards.forEach((card) => {
-    switch (card.type) {
-      case 'attack':
-        return generateAttackCard(card);
-
-      case 'spell':
-        return generateSpellCard(card);
-
-      case 'gem':
-        return generateGemCard(card);
-
-      case 'power':
-        return generatePowerCard(card);
-
-      case 'relic':
-        return generateRelicCard(card);
-
-      case 'minion':
-        return generateMinionCard(card);
-
-      default:
-        break;
-    }
+    image.onerror = () => {
+      console.warn('card image error:', { card });
+      logError(`"${card.name}" could not load image: "${card.image}"`);
+      reject();
+    };
   });
+};
+
+const generateMinionCard = async (card: ICard_Minion): Promise<void> => {
+  return new Promise((resolve: () => void, reject: () => void) => {
+    const ctx = createCanvasContext();
+    if (!ctx || !templates.minion) return;
+
+    const image = new Image();
+    image.src = card.image;
+    image.onload = () => {
+      if (!templates.minion) return;
+
+      const cardDefault = new CardDefault(ctx, imageHelpers);
+
+      // Imagem
+      ctx.drawImage(image, 0, 0, cardSizes.default.width, cardSizes.default.height);
+
+      // Template
+      ctx.drawImage(templates.minion, 0, 0, cardSizes.default.width, cardSizes.default.height);
+      cardDefault.writeMinionLabel();
+
+      // Nome
+      cardDefault.writeCardName(card.name, 64, '#111111');
+
+      // Descrição
+      cardDefault.writeDescription(card.description, 81);
+
+      // Vida
+      cardDefault.writeLife(String(card.life));
+
+      // Nêmesis
+      cardDefault.writeNemesis(card.nemesis, 95.5);
+
+      // Level
+      cardDefault.writeLevel(String(card.level), 94.4, 96.6);
+
+      resolve();
+    };
+
+    image.onerror = () => {
+      console.warn('card image error:', { card });
+      logError(`"${card.name}" could not load image: "${card.image}"`);
+      reject();
+    };
+  });
+};
+
+const generateCards = async (cards: ICard[]) => {
+  await Promise.all(
+    cards.map((card) => {
+      switch (card.type) {
+        case 'attack':
+          return generateAttackCard(card);
+
+        case 'spell':
+          return generateSpellCard(card);
+
+        case 'gem':
+          return generateGemCard(card);
+
+        case 'power':
+          return generatePowerCard(card);
+
+        case 'relic':
+          return generateRelicCard(card);
+
+        case 'minion':
+          return generateMinionCard(card);
+
+        default:
+          break;
+      }
+    })
+  );
+
+  // Pega todos os canvas, converte em imagem, cria um .zip e faz o usuário baixar
+  const zip = new jszip();
+  const canvases = document.querySelectorAll('canvas');
+
+  // Converte cada canvas em Blob e adiciona ao ZIP
+  await Promise.all(
+    Array.from(canvases).map(async (canvas, index) => {
+      return new Promise((resolve, reject) => {
+        try {
+          canvas.toBlob((blob) => {
+            zip.file(`card_${index + 1}.jpg`, blob);
+            console.log(`card_${index + 1} generated`, blob);
+            resolve(blob);
+          }, 'image/jpeg');
+        } catch (error) {
+          console.warn(error);
+          reject();
+        }
+      });
+    })
+  );
+
+  // Gera o zip e força o download
+  const content = await zip.generateAsync({ type: 'blob' });
+  saveAs(content, 'cards.zip');
 
   if (loaderDOM) loaderDOM.style.display = 'none';
 };
@@ -327,6 +402,9 @@ const generateCards = (cards: ICard[]) => {
 
 const handleFormSubmit = (e: Event) => {
   e.preventDefault();
+
+  if (resultDOM) resultDOM.innerHTML = '';
+  if (consoleDOM) consoleDOM.innerHTML = '';
 
   const fileInput = document.getElementById('file') as HTMLInputElement;
 
@@ -371,23 +449,32 @@ const handleFormSubmit = (e: Event) => {
             case 'name':
               cardIndexes.name = index;
               break;
+
             case 'description':
               cardIndexes.description = index;
               break;
+
             case 'characterName':
               cardIndexes.characterName = index;
               break;
+
             case 'image':
               cardIndexes.image = index;
               break;
+
             case 'cost':
               cardIndexes.cost = index;
               break;
+
             case 'nemesis':
               cardIndexes.nemesis = index;
               break;
+
             case 'level':
               cardIndexes.level = index;
+
+            case 'life':
+              cardIndexes.life = index;
               break;
 
             default:
@@ -408,11 +495,11 @@ const handleFormSubmit = (e: Event) => {
         const cardName = row[cardIndexes.name] as string;
         const cardDescription = row[cardIndexes.description] as string;
         const cardImage = row[cardIndexes.image] as string;
-        const cardCost = row[cardIndexes.cost] as number;
+        const cardCost = row[cardIndexes.cost] || 0;
         const cardCharacterName = row[cardIndexes.characterName] as string;
         const cardNemesis = row[cardIndexes.nemesis] as string;
-        const cardLevel = row[cardIndexes.level] as number;
-        const cardLife = row[cardIndexes.life] as number;
+        const cardLevel = row[cardIndexes.level] || 0;
+        const cardLife = row[cardIndexes.life] || 0;
 
         switch (cardType) {
           case 'attack':

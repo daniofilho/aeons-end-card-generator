@@ -1,7 +1,7 @@
 # Aeon's End - Gerador de Cartas
 
 Um gerador de cartas desenvolvido para facilitar a criação de expansões fan made de Aeon's End.
-O projeto nasceu para automatizar a criação de cartas da expansão Clair Obscure Expedition 33, publicada por um fã no BGG.
+O projeto nasceu para automatizar a criação de cartas da expansão Clair Obscure Expedition 33, publicada por um fã no BGG (https://boardgamegeek.com/thread/3533705/homebrew-clair-obscur-expedition-33-expansion-for).
 
 A ideia é simples: ao invés de montar manualmente cada carta, basta preencher as informações no arquivo
 `src/scripts/expedition-cards.ts` e o script gera automaticamente as imagens em JPG.
@@ -24,12 +24,28 @@ O uso é de sua inteira responsabilidade.
 
 `yarn build` => Cria o build de produção na pasta `/dist`;
 
+# Padrões do .xslx
+
+```
+  Padrão:
+
+  Bold:
+  <b>Each</b>
+
+  Quebra de linha:
+  \n
+
+  Ícone de Éter:
+  %% (coloque espaços para detectar como uma palavra)
+
+```
+
 ---
 
 # Aeon's End - Card Generator
 
 A card generator created to make it easier to design fan made expansions for Aeon's End.
-The project was originally developed to automate the creation of cards for the Clair Obscure Expedition 33 expansion, published by a fan on BGG.
+The project was originally developed to automate the creation of cards for the Clair Obscure Expedition 33 expansion, published by a fan on BGG (https://boardgamegeek.com/thread/3533705/homebrew-clair-obscur-expedition-33-expansion-for).
 
 The idea is simple: instead of manually creating each card, you just need to fill in the information in
 `src/scripts/expedition-cards.ts`, and the script will automatically generate the cards as JPG images.
@@ -54,25 +70,15 @@ Use at your own risk.
 
 ---
 
-A organizar:
-
-montagem do excel:
+# .xslx pattern
 
 ```
-  Padrão:
-
   Bold:
-  <b>Each</b> (coloque espaços para detectar como uma palavra)
+  <b>Each</b>
 
-  Quebra de linha:
-  \n (coloque espaços para detectar como uma palavra)
+  Line break:
+  \n
 
-  Ícone de Éter:
-  %% (coloque espaços para detectar como uma palavra)
-
+  Aether icon:
+  %% (add spaces to detect as a word)
 ```
-
-TODO
-
-[ ] Reconhecer frase dentro de um <b>
-[ ] reconhecer \n sem precisar separar com espaços
