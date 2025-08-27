@@ -37,8 +37,6 @@ export default class CanvasTextWriter {
   // * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   private detectWord = (text: string): IWord => {
-    console.log({ text });
-
     // <b>bold</b>
     if (text.startsWith('<b>') && text.endsWith('</b>')) {
       text = text.replace(/<\/?b>/g, '');

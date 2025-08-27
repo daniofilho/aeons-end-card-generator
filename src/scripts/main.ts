@@ -21,7 +21,7 @@ import templatePowerSrc from '../assets/images/templates/power.png';
 import templateRelicSrc from '../assets/images/templates/relic.png';
 import templateServoSrc from '../assets/images/templates/minion.png';
 
-import etherIconSrc from '../assets/images/ether-icon.png';
+import etherIconSrc from '../assets/images/card-ether-icon.png';
 
 import titleFontSRC from '../assets/fonts/Constantine.woff';
 import paragraphFontSRC from '../assets/fonts/AGaramondPro-Regular.woff';
